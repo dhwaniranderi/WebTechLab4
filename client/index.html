@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Upload</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="form-card">
+        <h2>Upload File Form</h2>
+        <form id="uploadForm" enctype="multipart/form-data">
+            <input type="file" name="file" required />
+            <button type="submit">Upload</button>
+        </form>
+        <h3>Uploaded Files</h3>
+        <ul id="fileList"></ul>
+    </div>
+
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const response = await fetch('/upload', { method: 'POST', body: formData });
+            const result = await response.json();
+            alert(result.message);
+            loadFiles();
+        });
+
+        async function loadFiles() {
+            const response = await fetch('/files');
+            const files = await response.json();
+            const fileList = document.getElementById('fileList');
+            fileList.innerHTML = '';
+            files.forEach(file => {
+                const li = document.createElement('li');
+                li.textContent = file.filename;
+                fileList.appendChild(li);
+            });
+        }
+
+        loadFiles();
+    </script>
+</body>
+</html>
