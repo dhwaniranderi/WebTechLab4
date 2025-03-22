@@ -7,6 +7,8 @@ const cors = require('cors');
 
 const app = express();
 app.use(cors());
+app.use(express.json()); 
+
 app.use(express.static(path.join(__dirname, 'uploads')));
 
 // MongoDB connection (from MongoDB Compass instructions)
@@ -57,6 +59,36 @@ app.get('/files', async (req, res) => {
 
 // Static file serving (refer: adding static page support)
 app.use(express.static(path.join(__dirname, 'client')));
+
+// PUT - Update file name by ID
+app.put('/files/:id', async (req, res) => {
+    const fileId = req.params.id;
+    const { filename } = req.body;
+    try {
+        const updatedFile = await File.findByIdAndUpdate(fileId, { filename: filename }, { new: true });
+        if (!updatedFile) {
+            return res.status(404).json({ message: "File not found" });
+        }
+        res.json({ message: "File updated successfully", updatedFile });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// DELETE - Delete file record by ID
+app.delete('/files/:id', async (req, res) => {
+    const fileId = req.params.id;
+    try {
+        const deletedFile = await File.findByIdAndDelete(fileId);
+        if (!deletedFile) {
+            return res.status(404).json({ message: "File not found" });
+        }
+        res.json({ message: "File deleted successfully", deletedFile });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 
 const PORT = 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

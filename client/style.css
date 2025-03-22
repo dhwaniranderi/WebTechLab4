@@ -77,3 +77,9 @@ li {
     padding: 10px;
     border-radius: 6px;
 }
+
+#fileList img {
+    border-radius: 8px;
+    margin-bottom: 6px;
+    border: 1px solid #ccc;
+}

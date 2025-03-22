@@ -28,16 +28,33 @@
         });
 
         async function loadFiles() {
-            const response = await fetch('/files');
-            const files = await response.json();
-            const fileList = document.getElementById('fileList');
-            fileList.innerHTML = '';
-            files.forEach(file => {
-                const li = document.createElement('li');
-                li.textContent = file.filename;
-                fileList.appendChild(li);
-            });
+    const response = await fetch('/files');
+    const files = await response.json();
+    const fileList = document.getElementById('fileList');
+    fileList.innerHTML = '';
+
+    files.forEach(file => {
+        const li = document.createElement('li');
+
+        // Check if file is an image
+        if (file.filename.match(/\.(jpg|jpeg|png|gif)$/i)) {
+            const img = document.createElement('img');
+            img.src = '/' + file.filename; // Served from /uploads
+            img.alt = file.filename;
+            img.width = 150;
+            img.height = 100;
+            img.style.marginRight = '10px';
+            li.appendChild(img);
         }
+
+        // Add file name
+        const textNode = document.createTextNode(file.filename);
+        li.appendChild(textNode);
+
+        fileList.appendChild(li);
+    });
+}
+
 
         loadFiles();
     </script>
